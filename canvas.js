@@ -115,10 +115,21 @@ let c = canvas.getContext('2d');
 
 // animate();
 
+let mouse = {
+  x: undefined,
+  y: undefined,
+};
+
+window.addEventListener('click', function (event) {
+  mouse.x = event.x;
+  mouse.y = event.y;
+  console.log(event);
+});
+
 function Balloon(centerX, centerY, dx, dy, radius, color) {
   this.centerX = centerX;
   this.centerY = centerY;
-  this.radius = radius * 0.85;
+  this.radius = radius;
   this.baseColor = color;
   this.dx = dx;
   this.dy = dy;
@@ -218,6 +229,14 @@ function Balloon(centerX, centerY, dx, dy, radius, color) {
 
     centerX += dx;
     // centerY += dy;
+    if (
+      mouse.x - centerX < 50 &&
+      mouse.x - centerX > -50 &&
+      mouse.y - centerY < 50 &&
+      mouse.y - centerY > -50
+    ) {
+      radius = 0;
+    }
 
     this.draw();
   };
