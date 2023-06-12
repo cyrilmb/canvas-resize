@@ -115,111 +115,138 @@ let c = canvas.getContext('2d');
 
 // animate();
 
-function Balloon(centerX, centerY, radius, color) {
+function Balloon(centerX, centerY, dx, dy, radius, color) {
   this.centerX = centerX;
   this.centerY = centerY;
   this.radius = radius * 0.85;
   this.baseColor = color;
-}
+  this.dx = dx;
+  this.dy = dy;
 
-let w_factor = 0.0333;
-let h_factor = 0.4;
-let curvature = (4 * (Math.sqrt(2) - 1)) / 3;
+  let w_factor = 0.0333;
+  let h_factor = 0.4;
+  let curvature = (4 * (Math.sqrt(2) - 1)) / 3;
 
-Balloon.prototype.draw = function () {
-  let centerX = this.centerX;
-  let centerY = this.centerY;
-  let radius = this.radius;
   let handleLength = curvature * radius; //Curvature = [(4 * (Math.sqrt(2) - 1)) / 3]
   let widthDiff = radius * w_factor; //width factor is a constant of 0.333 defined as global
   let heightDiff = radius * h_factor; //height factor is a constant of 0.4 defined as global -- Height will be larger than width to make it a Baloon else would become a circular balloon
   let balloonBottomY = centerY + radius + heightDiff; //Calculating the Bottom point of our Baloon by adding the centre Y, the Radies and the Height difference which was obtained from height factor
 
-  c.beginPath();
-  // Section to draw the Top Left Curve
-  let topLeftCurveStartX = centerX - radius;
-  let topLeftCurveStartY = centerY;
-  let topLeftCurveEndX = centerX;
-  let topLeftCurveEndY = centerY - radius;
-  c.moveTo(topLeftCurveStartX, topLeftCurveStartY);
-  c.bezierCurveTo(
-    topLeftCurveStartX,
-    topLeftCurveStartY - handleLength - widthDiff,
-    topLeftCurveEndX - handleLength,
-    topLeftCurveEndY,
-    topLeftCurveEndX,
-    topLeftCurveEndY
-  ); // The 2 Control points are placed in a way to get a bigger arc on the top
-  // Section to draw the Top Right Curve
-  let topRightCurveStartX = centerX;
-  let topRightCurveStartY = centerY - radius;
-  let topRightCurveEndX = centerX + radius;
-  let topRightCurveEndY = centerY;
-  c.bezierCurveTo(
-    topRightCurveStartX + handleLength + widthDiff,
-    topRightCurveStartY,
-    topRightCurveEndX,
-    topRightCurveEndY - handleLength,
-    topRightCurveEndX,
-    topRightCurveEndY
-  ); // The 2 Control points are placed in a way to get a bigger arc on the top
-  // Section to draw the Bottom Right Curve
-  let bottomRightCurveStartX = centerX + radius;
-  let bottomRightCurveStartY = centerY;
-  let bottomRightCurveEndX = centerX;
-  let bottomRightCurveEndY = balloonBottomY;
-  c.bezierCurveTo(
-    bottomRightCurveStartX,
-    bottomRightCurveStartY + handleLength,
-    bottomRightCurveEndX + handleLength,
-    bottomRightCurveEndY,
-    bottomRightCurveEndX,
-    bottomRightCurveEndY
-  ); // The 2 Control points are placed in a way to get a a smaller curve at the bottom
-  // Section to draw the Bottom Left Curve
-  let bottomLeftCurveStartX = centerX;
-  let bottomLeftCurveStartY = balloonBottomY;
-  let bottomLeftCurveEndX = centerX - radius;
-  let bottomLeftCurveEndY = centerY;
-  c.bezierCurveTo(
-    bottomLeftCurveStartX - handleLength,
-    bottomLeftCurveStartY,
-    bottomLeftCurveEndX,
-    bottomLeftCurveEndY + handleLength,
-    bottomLeftCurveEndX,
-    bottomLeftCurveEndY
-  ); // The 2 Control points are placed in a way to get a a smaller curve at the bottom
-  c.fillStyle = this.baseColor;
-  c.fill();
-  // End balloon path
-  // Create balloon tie
-  let halfTieWidth = (radius * 0.12) / 2;
-  let tieHeight = radius * 0.1;
-  let tieCurveHeight = radius * 0.13;
-  c.beginPath();
-  c.moveTo(centerX - 1, balloonBottomY);
-  c.lineTo(centerX - halfTieWidth, balloonBottomY + tieHeight);
-  c.quadraticCurveTo(
-    centerX,
-    balloonBottomY + tieCurveHeight,
-    centerX + halfTieWidth,
-    balloonBottomY + tieHeight
-  );
-  c.lineTo(centerX + 1, balloonBottomY); // Quadratic Curve to make a slightly curved triangle at the bottom
-  c.fill();
-};
+  this.draw = function () {
+    c.beginPath();
+    // Section to draw the Top Left Curve
+    let topLeftCurveStartX = centerX - radius;
+    let topLeftCurveStartY = centerY;
+    let topLeftCurveEndX = centerX;
+    let topLeftCurveEndY = centerY - radius;
+    c.moveTo(topLeftCurveStartX, topLeftCurveStartY);
+    c.bezierCurveTo(
+      topLeftCurveStartX,
+      topLeftCurveStartY - handleLength - widthDiff,
+      topLeftCurveEndX - handleLength,
+      topLeftCurveEndY,
+      topLeftCurveEndX,
+      topLeftCurveEndY
+    ); // The 2 Control points are placed in a way to get a bigger arc on the top
+    // Section to draw the Top Right Curve
+    let topRightCurveStartX = centerX;
+    let topRightCurveStartY = centerY - radius;
+    let topRightCurveEndX = centerX + radius;
+    let topRightCurveEndY = centerY;
+    c.bezierCurveTo(
+      topRightCurveStartX + handleLength + widthDiff,
+      topRightCurveStartY,
+      topRightCurveEndX,
+      topRightCurveEndY - handleLength,
+      topRightCurveEndX,
+      topRightCurveEndY
+    ); // The 2 Control points are placed in a way to get a bigger arc on the top
+    // Section to draw the Bottom Right Curve
+    let bottomRightCurveStartX = centerX + radius;
+    let bottomRightCurveStartY = centerY;
+    let bottomRightCurveEndX = centerX;
+    let bottomRightCurveEndY = balloonBottomY;
+    c.bezierCurveTo(
+      bottomRightCurveStartX,
+      bottomRightCurveStartY + handleLength,
+      bottomRightCurveEndX + handleLength,
+      bottomRightCurveEndY,
+      bottomRightCurveEndX,
+      bottomRightCurveEndY
+    ); // The 2 Control points are placed in a way to get a a smaller curve at the bottom
+    // Section to draw the Bottom Left Curve
+    let bottomLeftCurveStartX = centerX;
+    let bottomLeftCurveStartY = balloonBottomY;
+    let bottomLeftCurveEndX = centerX - radius;
+    let bottomLeftCurveEndY = centerY;
+    c.bezierCurveTo(
+      bottomLeftCurveStartX - handleLength,
+      bottomLeftCurveStartY,
+      bottomLeftCurveEndX,
+      bottomLeftCurveEndY + handleLength,
+      bottomLeftCurveEndX,
+      bottomLeftCurveEndY
+    ); // The 2 Control points are placed in a way to get a a smaller curve at the bottom
+    c.fillStyle = this.baseColor;
+    c.fill();
+    // End balloon path
+    // Create balloon tie
+    let halfTieWidth = (radius * 0.12) / 2;
+    let tieHeight = radius * 0.1;
+    let tieCurveHeight = radius * 0.13;
+    c.beginPath();
+    c.moveTo(centerX - 1, balloonBottomY);
+    c.lineTo(centerX - halfTieWidth, balloonBottomY + tieHeight);
+    c.quadraticCurveTo(
+      centerX,
+      balloonBottomY + tieCurveHeight,
+      centerX + halfTieWidth,
+      balloonBottomY + tieHeight
+    );
+    c.lineTo(centerX + 1, balloonBottomY); // Quadratic Curve to make a slightly curved triangle at the bottom
+    c.fill();
+  };
 
-let balloon1 = new Balloon(100, 100, 85, 'red');
-balloon1.draw();
+  this.update = function () {
+    if (centerX + radius > innerWidth || centerX - radius < 0) {
+      dx = -dx;
+    }
+
+    if (centerY + radius > innerHeight || centerY - radius < 0) {
+      dy = -dy;
+    }
+
+    centerX += dx;
+    // centerY += dy;
+
+    this.draw();
+  };
+}
+
+// let balloon1 = new Balloon(100, 100, 85, 'red');
+// balloon1.draw();
 
 let balloonArray = [];
 
 for (let i = 0; i < 99; i++) {
-  let radius = randomNumber(1, 100);
+  let radius = randomNumber(1, 66);
   let x = Math.random() * (innerWidth - radius * 2) + radius;
   let y = Math.random() * (innerHeight - radius * 2) + radius;
   let dx = Math.random() - 0.5 * randomNumber(1, 5);
   let dy = Math.random() - 0.5 * randomNumber(1, 5);
 
-  balloonArray.push(new Circle(x, y, dx, dy, radius));
+  balloonArray.push(new Balloon(x, y, dx, dy, radius, 'red'));
 }
+
+function animate() {
+  //this function loops itself to repeatedly refresh
+  //the page with new coordinates for the shape
+  requestAnimationFrame(animate);
+  c.clearRect(0, 0, innerWidth, innerHeight);
+
+  for (let i = 0; i < balloonArray.length; i++) {
+    balloonArray[i].update();
+  }
+}
+
+animate();
